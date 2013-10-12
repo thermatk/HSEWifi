@@ -17,7 +17,7 @@ public class WiFiReceiver extends BroadcastReceiver {
 			if (wifiInfo == null) {
 				return;
 			}
-			if(wifiInfo.getSSID().equals("\"StrategikonOfMaurice\"")) {
+			if(wifiInfo.getSSID().equals("\"HSE\"")) {
 				Toast.makeText(context, context.getString(R.string.connectedto)+ " " + "HSE", Toast.LENGTH_SHORT).show();
 				context.startService(new Intent(context, HSEConnect.class));
 			}
