@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">HSE WiFi</string>
+    <string name="action_settings">И меню нет</string>
+    <string name="hello_world">Пока нечего настраивать :)</string>
+    <string name="connectedto">Подключён к </string>
+
+</resources>
