@@ -33,13 +33,22 @@ public class HSEConnect extends Service {
 
 	private void sendInfo() {
 		AsyncHttpClient client = new AsyncHttpClient();
-		client.get("http://ipecho.net/plain", new AsyncHttpResponseHandler() {
+		RequestParams params = new RequestParams();
+        params.put("buttonClicked", "4");
+        params.put("err_flag", "0");
+        params.put("err_msg", "");
+        params.put("info_flag", "0");
+        params.put("info_msg", "");
+        params.put("redirect_url", "");
+        params.put("username", "hseguest");
+        params.put("password", "hsepassword");
+        client.post("https://wlc22.hse.ru/login.html", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(final String response) {
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
-						Toast.makeText(getApplicationContext(), response,
+						Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.authsent),
 								Toast.LENGTH_SHORT).show();
 					}
 				});
