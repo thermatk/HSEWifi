@@ -20,6 +20,9 @@ public class WiFiReceiver extends BroadcastReceiver {
 			if(wifiInfo.getSSID().equals("\"HSE\"")) {
 				Toast.makeText(context, context.getString(R.string.connectedto)+ " " + "HSE", Toast.LENGTH_SHORT).show();
 				context.startService(new Intent(context, HSEConnect.class));
+			} else if(wifiInfo.getSSID().equals("\"MosMetro_Free\"")) {
+				Toast.makeText(context, context.getString(R.string.connectedto)+ " " + "MosMetro", Toast.LENGTH_SHORT).show();
+				context.startService(new Intent(context, MosMetro.class));
 			}
 		}
 	}
