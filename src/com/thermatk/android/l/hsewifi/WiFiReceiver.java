@@ -22,7 +22,7 @@ public class WiFiReceiver extends BroadcastReceiver {
 				context.startService(new Intent(context, HSEConnect.class));
 			} else if(wifiInfo.getSSID().equals("\"MosMetro_Free\"")) {
 				Toast.makeText(context, context.getString(R.string.connectedto)+ " " + "MosMetro", Toast.LENGTH_SHORT).show();
-				//context.startService(new Intent(context, MosMetro.class));
+				context.startService(new Intent(context, MosMetro.class));
 			}
 		}
 	}
