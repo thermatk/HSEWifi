@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import org.apache.http.Header;
+
 public class MosMetro extends Service {
 	private Handler handler;
 
@@ -42,7 +44,7 @@ public class MosMetro extends Service {
         params.put("redirect_url", "");
         client.post("http://1.1.1.1/login.html", params, new AsyncHttpResponseHandler() {
 			@Override
-			public void onSuccess(final String response) {
+			public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 				handler.post(new Runnable() {
 					@Override
 					public void run() {

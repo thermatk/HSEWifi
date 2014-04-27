@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import org.apache.http.Header;
+
 public class HSEConnect extends Service {
 	private Handler handler;
 
@@ -44,7 +46,7 @@ public class HSEConnect extends Service {
         params.put("password", "hsepassword");
         client.post("https://wlc22.hse.ru/login.html", params, new AsyncHttpResponseHandler() {
 			@Override
-			public void onSuccess(final String response) {
+			public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 				handler.post(new Runnable() {
 					@Override
 					public void run() {
