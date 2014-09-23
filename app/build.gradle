@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 18
+        targetSdkVersion 19
     }
 
     buildTypes {
@@ -18,6 +18,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:+'
+    compile 'com.android.support:support-v4:19.+'
     compile 'com.loopj.android:android-async-http:1.4.6@jar'
 }
