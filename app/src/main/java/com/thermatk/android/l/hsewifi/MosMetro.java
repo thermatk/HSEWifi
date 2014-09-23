@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.apache.http.Header;
@@ -19,6 +20,7 @@ public class MosMetro extends Service {
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		handler = new Handler();
+        Log.i("HSEWIFI", "4.B MOSMETRO SERVICE");
 		sendInfo();
 		stopSelf();
 		return super.onStartCommand(intent, flags, startId);
@@ -42,6 +44,7 @@ public class MosMetro extends Service {
         params.put("info_flag", "0");
         params.put("info_msg", "");
         params.put("redirect_url", "");
+        Log.i("HSEWIFI", "5.B MOSMETRO SENDING REQUEST");
         client.post("http://1.1.1.1/login.html", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -53,7 +56,12 @@ public class MosMetro extends Service {
 					}
 				});
 			}
-		});
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                Log.i("HSEWIFI", "6.B MOSMETRO FAILED REQUEST" + statusCode);
+            }
+        });
 	}
 
 }
