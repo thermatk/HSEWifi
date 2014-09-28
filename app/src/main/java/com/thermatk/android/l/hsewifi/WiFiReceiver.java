@@ -21,16 +21,18 @@ public class WiFiReceiver extends BroadcastReceiver {
                 Log.i("HSEWIFI", "2.E wifiInfo==null");
 				return;
 			}
-			if(wifiInfo.getSSID().equals("\"HSE\"")) {
+            String wifiName = wifiInfo.getSSID();
+            Log.i("HSEWIFI", "2. "+ wifiName + " BSSID: "+wifiInfo.getBSSID());
+			if(wifiName.equals("\"HSE\"")) {
                 Log.i("HSEWIFI", "3.A HSE");
 				Toast.makeText(context, context.getString(R.string.connectedto)+ " " + "HSE", Toast.LENGTH_SHORT).show();
 				context.startService(new Intent(context, HSEConnect.class));
-			} else if(wifiInfo.getSSID().equals("\"MosMetro_Free\"")) {
+			} else if(wifiName.equals("\"MosMetro_Free\"")) {
                 Log.i("HSEWIFI", "3.B MOSMETRO");
 				Toast.makeText(context, context.getString(R.string.connectedto)+ " " + "MosMetro", Toast.LENGTH_SHORT).show();
 				context.startService(new Intent(context, MosMetro.class));
 			}
-            Log.i("HSEWIFI", "3.C WRONG NETWORK");
+            Log.i("HSEWIFI", "3.C WRONG NETWORK, END");
 		}
 	}
 }
