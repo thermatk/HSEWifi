@@ -38,12 +38,11 @@ public class MosMetro extends Service {
 	private void sendInfo() {
 		AsyncHttpClient client = new AsyncHttpClient();
 		RequestParams params = new RequestParams();
-        params.put("buttonClicked", "4");
+        params.put("buttonClicked", "4"); 
+        params.put("username", "mosmetro");
+	params.put("password", "gfhjkm");
+        params.put("redirect_url", "http://vmet.ro");
         params.put("err_flag", "0");
-        params.put("err_msg", "");
-        params.put("info_flag", "0");
-        params.put("info_msg", "");
-        params.put("redirect_url", "");
         Log.i("HSEWIFI", "5.B MOSMETRO SENDING REQUEST");
         client.post("http://1.1.1.1/login.html", params, new AsyncHttpResponseHandler() {
 			@Override
