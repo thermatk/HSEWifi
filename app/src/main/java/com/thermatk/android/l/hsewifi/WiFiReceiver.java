@@ -22,7 +22,7 @@ public class WiFiReceiver extends BroadcastReceiver {
 				return;
 			}
             String wifiName = wifiInfo.getSSID();
-            Log.i("HSEWIFI", "2. "+ wifiName + " BSSID: "+wifiInfo.getBSSID() + "STRENGTH: " +WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4));
+            Log.i("HSEWIFI", "2. "+ wifiName + " BSSID: "+wifiInfo.getBSSID() + " STRENGTH: " +WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4));
 			if(wifiName.equals("\"HSE\"")) {
                 Log.i("HSEWIFI", "3.A HSE");
 				Toast.makeText(context, context.getString(R.string.connectedto)+ " " + "HSE", Toast.LENGTH_SHORT).show();
