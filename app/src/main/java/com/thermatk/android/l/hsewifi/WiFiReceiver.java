@@ -10,25 +10,25 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class WiFiReceiver extends BroadcastReceiver {
-	@Override
-	public void onReceive(Context context, Intent intent) {
+    @Override
+    public void onReceive(Context context, Intent intent) {
         Log.i("HSEWIFI", "1. RECEIVED");
-		NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-		if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)	&& networkInfo.getState() == NetworkInfo.State.CONNECTED) {
+        NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+        if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION) && networkInfo.getState() == NetworkInfo.State.CONNECTED) {
             Log.i("HSEWIFI", "2. CONNECTED");
-			WifiInfo wifiInfo = intent.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO);
-			if (wifiInfo == null) {
+            WifiInfo wifiInfo = intent.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO);
+            if (wifiInfo == null) {
                 Log.i("HSEWIFI", "2.E wifiInfo==null");
-				return;
-			}
+                return;
+            }
             String wifiName = wifiInfo.getSSID();
-            Log.i("HSEWIFI", "2. "+ wifiName + " BSSID: "+wifiInfo.getBSSID() + " STRENGTH: " +WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4));
-			if(wifiName.equals("\"HSE\"")) {
+            Log.i("HSEWIFI", "2. " + wifiName + " BSSID: " + wifiInfo.getBSSID() + " STRENGTH: " + WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4));
+            if (wifiName.equals("\"HSE\"")) {
                 Log.i("HSEWIFI", "3.A HSE");
-				Toast.makeText(context, context.getString(R.string.connectedto)+ " " + "HSE", Toast.LENGTH_SHORT).show();
-				context.startService(new Intent(context, HSEConnect.class));
-			}
+                Toast.makeText(context, context.getString(R.string.connectedto) + " " + "HSE", Toast.LENGTH_SHORT).show();
+                context.startService(new Intent(context, HSEConnect.class));
+            }
             Log.i("HSEWIFI", "3.C WRONG NETWORK, END");
-		}
-	}
+        }
+    }
 }
