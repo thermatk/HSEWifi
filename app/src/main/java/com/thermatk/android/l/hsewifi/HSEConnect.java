@@ -2,6 +2,7 @@ package com.thermatk.android.l.hsewifi;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -39,6 +40,10 @@ public class HSEConnect extends Service {
     }
 
     private void sendInfo() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("buttonClicked", "4");
