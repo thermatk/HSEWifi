@@ -1,7 +1,13 @@
 package com.thermatk.android.l.hsewifi;
 
+import android.annotation.TargetApi;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -41,7 +47,20 @@ public class HSEConnect extends Service {
 
     private void sendInfo() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            ConnectivityManager connection_manager =
+                    (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
 
+            NetworkRequest.Builder request = new NetworkRequest.Builder();
+            request.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+
+            connection_manager.registerNetworkCallback(request.build(), new ConnectivityManager.NetworkCallback() {
+
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void onAvailable(Network network) {
+                    ConnectivityManager.setProcessDefaultNetwork(network);
+                }
+            });
         }
 
         AsyncHttpClient client = new AsyncHttpClient();
