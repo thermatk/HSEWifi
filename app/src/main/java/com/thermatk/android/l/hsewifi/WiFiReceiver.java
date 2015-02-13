@@ -15,6 +15,7 @@ public class WiFiReceiver extends BroadcastReceiver {
         Log.i("HSEWIFI", "1. RECEIVED");
         WifiManager wifiMan = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         NetworkInfo networkInfo = intent.getParcelableExtra(wifiMan.EXTRA_NETWORK_INFO);
+
         if (intent.getAction().equals(wifiMan.NETWORK_STATE_CHANGED_ACTION) && networkInfo.getState() == NetworkInfo.State.CONNECTED) {
             Log.i("HSEWIFI", "2. CONNECTED");
             WifiInfo wifiInfo = intent.getParcelableExtra(wifiMan.EXTRA_WIFI_INFO);
@@ -28,6 +29,10 @@ public class WiFiReceiver extends BroadcastReceiver {
                 Log.i("HSEWIFI", "3.A HSE");
                 Toast.makeText(context, context.getString(R.string.connectedto) + " " + "HSE", Toast.LENGTH_SHORT).show();
                 context.startService(new Intent(context, HSEConnect.class));
+            }  else if(wifiName.equals("\"MosMetro_Free\"") || wifiName.equals("MosMetro_Free")) {
+                Log.i("HSEWIFI", "3.B MOSMETRO");
+                Toast.makeText(context, context.getString(R.string.connectedto) + " " + "MosMetro", Toast.LENGTH_SHORT).show();
+                context.startService(new Intent(context, MosMetro.class));
             }
             Log.i("HSEWIFI", "3.C WRONG NETWORK, END");
         }
