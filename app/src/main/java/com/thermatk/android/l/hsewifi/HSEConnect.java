@@ -8,8 +8,6 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,16 +20,8 @@ import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 
-import java.util.Iterator;
-import java.util.List;
-
 public class HSEConnect extends Service {
     private Handler handler;
-
-    public void onCreate() {
-        super.onCreate();
-
-    }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         handler = new Handler();
@@ -41,17 +31,12 @@ public class HSEConnect extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
-
     public IBinder onBind(Intent intent) {
         return null;
     }
 
     private void sendInfo() {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             ConnectivityManager connection_manager =
                     (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -89,33 +74,12 @@ public class HSEConnect extends Service {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                    WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                    if (wm.setWifiEnabled(true)) {
-
-                        Log.i("HSEWIFI", "HSE WIFI ONN");
-                        List<WifiConfiguration> networks = wm.getConfiguredNetworks();
-                        Iterator<WifiConfiguration> iterator = networks.iterator();
-                        while (iterator.hasNext()) {
-                            Log.i("HSEWIFI", "HSE WIFI ON 222");
-                            WifiConfiguration wifiConfig = iterator.next();
-                            if (wifiConfig.SSID.equals("\"HSE\"")) {
-                                Log.i("HSEWIFI", "HSE WIFI ON 232323");
-                                boolean state = wm.enableNetwork(wifiConfig.networkId, true);
-                                Log.i("HSEWIFI", "HSE WIFI ON " + state);
-
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(getApplicationContext(), "Успех!",
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            } else
-                                wm.disableNetwork(wifiConfig.networkId);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    for (Network net : cm.getAllNetworks()) {
+                        if (cm.getNetworkInfo(net).getType() == ConnectivityManager.TYPE_WIFI) {
+                            cm.reportBadNetwork(net);
                         }
-                        wm.reconnect();
-                        Log.i("HSEWIFI", "HSE WIFI ON 3333");
                     }
                 }
             }
