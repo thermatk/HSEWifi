@@ -35,26 +35,30 @@ public class ConnectService extends Service {
     }
 
     private void makeRequest() {
-        AsyncHttpClient client = new AsyncHttpClient();
+
         RequestParams params = new RequestParams();
         params.put("buttonClicked", "4");
         params.put("username", "mosmetro");
         params.put("password", "gfhjkm");
         params.put("redirect_url", "http://vmet.ro");
         params.put("err_flag", "0");
-        Log.i(LogConst.LOG, "5.B MOSMETRO SENDING REQUEST");
+
+        Log.i(LogConst.LOG, "SENDING REQUEST");
+        AsyncHttpClient client = new AsyncHttpClient();
         client.post("http://1.1.1.1/login.html", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 toastMessage(getApplicationContext().getString(R.string.authsent));
+                Log.i(LogConst.LOG, "GOOD REQUEST " + statusCode);
                 if (isLollipop()){
+                    Log.i(LogConst.LOG, "LOLLIPOP, REPORT GOOD NETWORK");
                     reportGoodNetwork();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                Log.i(LogConst.LOG, "6.B MOSMETRO FAILED REQUEST" + statusCode);
+                Log.i(LogConst.LOG, "FAILED REQUEST " + statusCode);
             }
         });
     }
