@@ -17,6 +17,7 @@
         android:theme="@style/AppTheme">
         <service android:name=".HSEConnect"/>
         <service android:name=".MosMetro"/>
+        <service android:name=".ConnectService"/>
         <activity
             android:name="com.thermatk.android.l.hsewifi.OptionActivity"
             android:label="@string/app_name">
