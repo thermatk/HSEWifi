@@ -64,11 +64,7 @@ public class ConnectService extends Service {
     }
 
     private boolean isLollipop() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            return true;
-        } else {
-            return false;
-        }
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
