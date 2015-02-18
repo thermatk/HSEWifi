@@ -1,5 +1,5 @@
 package com.thermatk.android.l.hsewifi;
 
-public interface LogConst {
+interface LogConst {
     String LOG = "th.hsewifi.u";
 }
