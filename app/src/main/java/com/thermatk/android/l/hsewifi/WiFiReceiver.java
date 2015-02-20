@@ -12,19 +12,22 @@ import android.widget.Toast;
 public class WiFiReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i("HSEWIFI", "1. RECEIVED");
+        Log.i(LogConst.LOG, "BROADCAST RECEIVED");
+
         WifiManager wifiMan = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         NetworkInfo networkInfo = intent.getParcelableExtra(wifiMan.EXTRA_NETWORK_INFO);
 
         if (intent.getAction().equals(wifiMan.NETWORK_STATE_CHANGED_ACTION) && networkInfo.getState() == NetworkInfo.State.CONNECTED) {
-            Log.i("HSEWIFI", "2. CONNECTED");
+            Log.i(LogConst.LOG, "WIFISTATE CONNECTED");
+
             WifiInfo wifiInfo = intent.getParcelableExtra(wifiMan.EXTRA_WIFI_INFO);
             if (wifiInfo == null) {
-                Log.i("HSEWIFI", "2.E wifiInfo==null");
+                Log.i(LogConst.LOG, "wifiInfo==null");
                 return;
             }
             String wifiName = wifiInfo.getSSID();
-            Log.i("HSEWIFI", "2. " + wifiName + " BSSID: " + wifiInfo.getBSSID() + " STRENGTH: " + WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4));
+            Log.i(LogConst.LOG, "STATS: " + wifiName + " BSSID: " + wifiInfo.getBSSID() + " STRENGTH: " + WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4));
+
             if (wifiName.equals("\"HSE\"") || wifiName.equals("HSE")) {
                 Log.i("HSEWIFI", "3.A HSE");
                 Toast.makeText(context, context.getString(R.string.connectedto) + " " + "HSE", Toast.LENGTH_SHORT).show();
@@ -34,7 +37,8 @@ public class WiFiReceiver extends BroadcastReceiver {
                 Toast.makeText(context, context.getString(R.string.connectedto) + " " + "MosMetro", Toast.LENGTH_SHORT).show();
                 context.startService(new Intent(context, MosMetro.class));
             }
-            Log.i("HSEWIFI", "3.C WRONG NETWORK, END");
+
+            Log.i(LogConst.LOG, "WRONG NETWORK, END OF WORK");
         }
     }
 }
