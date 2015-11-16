@@ -25,7 +25,7 @@ public class HSEConnect extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         handler = new Handler();
-        Log.i("HSEWIFI", "4.A HSE SERVICE");
+        Log.i(LogConst.LOG, "AutoLogin service started");
         sendInfo();
         stopSelf();
         return super.onStartCommand(intent, flags, startId);
@@ -63,14 +63,14 @@ public class HSEConnect extends Service {
         params.put("redirect_url", "");
         params.put("username", "hseguest");
         params.put("password", "hsepassword");
-        Log.i("HSEWIFI", "5.A HSE SENDING REQUEST");
+        Log.i(LogConst.LOG, "Sending auth request");
         client.post("https://wlc22.hse.ru/login.html", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.authsent),
+                        Toast.makeText(getApplicationContext(), R.string.authsent,
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -86,7 +86,7 @@ public class HSEConnect extends Service {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                Log.i("HSEWIFI", "6.A HSE FAILED REQUEST" + statusCode);
+                Log.i(LogConst.LOG, "AuthRequest failed" + statusCode);
             }
         });
     }
