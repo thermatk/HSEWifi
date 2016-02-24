@@ -18,7 +18,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.apache.http.Header;
+import cz.msebera.android.httpclient.Header;
 
 public class HSEConnect extends Service {
     private Handler handler;
