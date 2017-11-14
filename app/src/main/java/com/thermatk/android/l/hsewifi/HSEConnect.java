@@ -11,7 +11,6 @@ import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -20,12 +19,15 @@ import com.loopj.android.http.RequestParams;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.thermatk.android.l.hsewifi.Logger.log;
+
+
 public class HSEConnect extends Service {
     private Handler handler;
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         handler = new Handler();
-        Log.i(LogConst.LOG, "AutoLogin service started");
+        log("AutoLogin service started");
         sendInfo();
         stopSelf();
         return super.onStartCommand(intent, flags, startId);
@@ -63,7 +65,7 @@ public class HSEConnect extends Service {
         params.put("redirect_url", "");
         params.put("username", "hseguest");
         params.put("password", "hsepassword");
-        Log.i(LogConst.LOG, "Sending auth request");
+        log("Sending auth request");
         client.post("https://wlc22.hse.ru/login.html", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -86,7 +88,7 @@ public class HSEConnect extends Service {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                Log.i(LogConst.LOG, "AuthRequest failed" + statusCode);
+                log("AuthRequest failed" + statusCode);
             }
         });
     }

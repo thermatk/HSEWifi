@@ -1,6 +1,5 @@
 package com.thermatk.android.l.hsewifi;
 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -23,7 +22,7 @@ public class OptionActivity extends Activity implements Switch.OnCheckedChangeLi
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         PackageManager pm = getPackageManager();
-                        pm.setComponentEnabledSetting(new ComponentName(OptionActivity.this,OptionActivity.class),PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        pm.setComponentEnabledSetting(new ComponentName(OptionActivity.this, OptionActivity.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                                 PackageManager.DONT_KILL_APP);
                     }
                 })
