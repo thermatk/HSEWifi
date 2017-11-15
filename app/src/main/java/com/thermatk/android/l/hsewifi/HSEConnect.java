@@ -1,33 +1,43 @@
 package com.thermatk.android.l.hsewifi;
 
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import java.io.IOException;
 
-import cz.msebera.android.httpclient.Header;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static com.thermatk.android.l.hsewifi.Logger.log;
 
 
 public class HSEConnect extends Service {
     private Handler handler;
+    private ConnectivityManager connectivityManager;
+    private final OkHttpClient client = new OkHttpClient();
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         handler = new Handler();
+        connectivityManager =
+                (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
         log("AutoLogin service started");
+        defaultToWifi();
         sendInfo();
         stopSelf();
         return super.onStartCommand(intent, flags, startId);
@@ -38,59 +48,121 @@ public class HSEConnect extends Service {
     }
 
     private void sendInfo() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            ConnectivityManager connection_manager =
-                    (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+        RequestBody formBody = new FormBody.Builder()
+                .add("buttonClicked", "4")
+                .add("err_flag", "0")
+                .add("err_msg", "")
+                .add("info_flag", "0")
+                .add("info_msg", "")
+                .add("redirect_url", "")
+                .add("username", "hseguest")
+                .add("password", "hsepassword")
+                .build();
 
-            NetworkRequest.Builder request = new NetworkRequest.Builder();
-            request.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+        Request request = new Request.Builder()
+                .url("https://wlc22.hse.ru/login.html")
+                .post(formBody)
+                .build();
 
-            connection_manager.registerNetworkCallback(request.build(), new ConnectivityManager.NetworkCallback() {
+        log("Sending AuthRequest");
 
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public void onAvailable(Network network) {
-                    ConnectivityManager.setProcessDefaultNetwork(network);
-                }
-            });
-        }
-
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.put("buttonClicked", "4");
-        params.put("err_flag", "0");
-        params.put("err_msg", "");
-        params.put("info_flag", "0");
-        params.put("info_msg", "");
-        params.put("redirect_url", "");
-        params.put("username", "hseguest");
-        params.put("password", "hsepassword");
-        log("Sending auth request");
-        client.post("https://wlc22.hse.ru/login.html", params, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), R.string.authsent,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                    for (Network net : cm.getAllNetworks()) {
-                        if (cm.getNetworkInfo(net).getType() == ConnectivityManager.TYPE_WIFI) {
-                            cm.reportBadNetwork(net);
-                        }
-                    }
-                }
+        client.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+                log("AuthRequest failed" + e.getMessage());
             }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                log("AuthRequest failed" + statusCode);
+            @Override public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    log("AuthRequest unexpected code " + response);
+                }
+
+                toast(R.string.authsent);
+                recheckNetwork();
+
+                Headers responseHeaders = response.headers();
+                for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+                    log("OkHttp Header " + responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                }
+
+                // necessary to close ResponseBody
+                log("OkHttp ResponseBody: " + response.body().string());
             }
         });
+    }
+
+    private ResponseBody getResponseBody(Response response) {
+        try {
+            return response.body();
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
+    }
+
+    private void toast(final int resId) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), resId,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void defaultToWifi() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            connectivityManager.setNetworkPreference(ConnectivityManager.TYPE_WIFI);
+            return;
+        }
+
+        Network network = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            network = getNetwork();
+        }
+
+        if(network != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                connectivityManager.bindProcessToNetwork(getNetwork());
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                try {
+                    ConnectivityManager.setProcessDefaultNetwork(network);
+                } catch (IllegalStateException ignored) {
+
+                }
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private Network getNetwork() {
+        for (Network network : connectivityManager.getAllNetworks()) {
+            NetworkInfo info = connectivityManager.getNetworkInfo(network);
+            if (info != null && info.getType() == ConnectivityManager.TYPE_WIFI) {
+                return network;
+            }
+        }
+        log("No WiFi found, null");
+        return null;
+    }
+
+    private void recheckNetwork() {
+        Network network = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            network = getNetwork();
+        } else {
+            return;
+        }
+
+        if(network != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                connectivityManager.reportNetworkConnectivity(network,true);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                connectivityManager.reportBadNetwork(network);
+            }
+        }
     }
 
 }

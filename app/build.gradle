@@ -19,5 +19,5 @@ android {
 
 dependencies {
     implementation 'com.android.support:support-v4:25.4.0'
-    implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
 }
