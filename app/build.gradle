@@ -18,6 +18,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:25.4.0'
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
 }

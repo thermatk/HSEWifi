@@ -1,5 +1,6 @@
 package com.thermatk.android.l.hsewifi;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +10,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.RequiresApi;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 import static com.thermatk.android.l.hsewifi.Logger.log;
 
@@ -30,16 +30,27 @@ import static com.thermatk.android.l.hsewifi.Logger.log;
 public class HSEConnect extends Service {
     private Handler handler;
     private ConnectivityManager connectivityManager;
-    private final OkHttpClient client = new OkHttpClient();
+    private OkHttpClient client;
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         handler = new Handler();
+
         connectivityManager =
                 (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(BuildConfig.DEBUG) {
+            client = new OkHttpClient.Builder()
+                    .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                    .build();
+        } else {
+            client = new OkHttpClient();
+        }
+
         log("AutoLogin service started");
+
         defaultToWifi();
         sendInfo();
         stopSelf();
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -68,7 +79,7 @@ public class HSEConnect extends Service {
 
         client.newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
-                log("AuthRequest failed" + e.getMessage());
+                log("AuthRequest failed: " + e.getMessage());
             }
 
             @Override public void onResponse(Call call, Response response) throws IOException {
@@ -85,19 +96,12 @@ public class HSEConnect extends Service {
                 }
 
                 // necessary to close ResponseBody
-                log("OkHttp ResponseBody: " + response.body().string());
+                String responseString = response.body().string();
+                if(responseString!=null){
+                    log("OkHttp ResponseBody: " + response.body().string());
+                }
             }
         });
-    }
-
-    private ResponseBody getResponseBody(Response response) {
-        try {
-            return response.body();
-        } finally {
-            if (response != null) {
-                response.close();
-            }
-        }
     }
 
     private void toast(final int resId) {
@@ -135,7 +139,7 @@ public class HSEConnect extends Service {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private Network getNetwork() {
         for (Network network : connectivityManager.getAllNetworks()) {
             NetworkInfo info = connectivityManager.getNetworkInfo(network);
@@ -147,8 +151,9 @@ public class HSEConnect extends Service {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     private void recheckNetwork() {
-        Network network = null;
+        Network network;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             network = getNetwork();
@@ -159,7 +164,10 @@ public class HSEConnect extends Service {
         if(network != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 connectivityManager.reportNetworkConnectivity(network,true);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                return;
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 connectivityManager.reportBadNetwork(network);
             }
         }

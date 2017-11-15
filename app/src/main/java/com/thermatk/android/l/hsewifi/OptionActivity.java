@@ -6,12 +6,13 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
 public class OptionActivity extends Activity implements Switch.OnCheckedChangeListener {
 
-    Switch hideIconSwitch;
+    private Switch hideIconSwitch;
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -24,12 +25,14 @@ public class OptionActivity extends Activity implements Switch.OnCheckedChangeLi
                         PackageManager pm = getPackageManager();
                         pm.setComponentEnabledSetting(new ComponentName(OptionActivity.this, OptionActivity.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                                 PackageManager.DONT_KILL_APP);
+                        hideIconSwitch.setVisibility(View.GONE);
                     }
                 })
                 .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
+                        hideIconSwitch.setChecked(false);
                     }
                 })
                 .create()

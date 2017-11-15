@@ -15,7 +15,7 @@ public class WiFiReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         log("Broadcast received");
 
-        WifiManager wifiMan = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiMan = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         NetworkInfo networkInfo = intent.getParcelableExtra(wifiMan.EXTRA_NETWORK_INFO);
 
         if (intent.getAction().equals(wifiMan.NETWORK_STATE_CHANGED_ACTION) && networkInfo.getState() == NetworkInfo.State.CONNECTED) {
