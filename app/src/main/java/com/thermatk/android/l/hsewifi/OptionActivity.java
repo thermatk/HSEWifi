@@ -52,11 +52,11 @@ public class OptionActivity extends Activity implements Switch.OnCheckedChangeLi
         linearLayout.setPadding(padding,padding,padding,padding);
 
         TextView textView = new TextView(this);
-        textView.setText(R.string.hello);
+        textView.setText("Нечего настраивать :) Приложение работает само, если может.");
         linearLayout.addView(textView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         hideIconSwitch = new Switch(this);
-        hideIconSwitch.setText(R.string.hide_icon);
+        hideIconSwitch.setText("Скрывать значок приложения");
         linearLayout.addView(hideIconSwitch, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         setContentView(linearLayout, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));

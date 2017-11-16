@@ -30,7 +30,7 @@ public class WiFiReceiver extends BroadcastReceiver {
             log("WiFi name is " + wifiName);
 
             if (wifiName.equals("\"HSE\"") || wifiName.equals("HSE")) {
-                Toast.makeText(context, R.string.connectedto, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Подключён к HSE", Toast.LENGTH_SHORT).show();
                 context.startService(new Intent(context, HSEConnect.class));
             }
         }

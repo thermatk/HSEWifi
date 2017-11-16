@@ -87,7 +87,7 @@ public class HSEConnect extends Service {
                     log("AuthRequest unexpected code " + response);
                 }
 
-                toast(R.string.authsent);
+                toast("Запрос на аутентификацию отправлен");
                 recheckNetwork();
 
                 Headers responseHeaders = response.headers();
@@ -104,11 +104,11 @@ public class HSEConnect extends Service {
         });
     }
 
-    private void toast(final int resId) {
+    private void toast(final String message) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), resId,
+                Toast.makeText(getApplicationContext(), message,
                         Toast.LENGTH_SHORT).show();
             }
         });
